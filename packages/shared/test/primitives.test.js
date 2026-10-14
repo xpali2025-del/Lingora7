@@ -1,0 +1,12 @@
+import test from 'node:test'; import assert from 'node:assert/strict';
+import { encrypt, decrypt, loadKey, hashPassword, verifyPassword, sha256Hex, hmacSha256Hex } from '../src/crypto.js';
+import { hotp, totp, verifyTotp, base32Encode, base32Decode, generateSecret } from '../src/totp.js';
+import * as M from '../src/money.js';
+const K = Buffer.alloc(32, 7);
+test('aes roundtrip + tamper', () => { const c = encrypt('secret ✓', K); assert.equal(decrypt(c, K), 'secret ✓'); const bad = c.slice(0,-3)+(c.endsWith('AAA')?'BBB':'AAA'); assert.throws(() => decrypt(bad, K)); assert.throws(() => decrypt(c, Buffer.alloc(32, 8))); });
+test('RFC 6238 vectors', () => { const k = Buffer.from('12345678901234567890'); assert.equal(totp(k, 59000, 8), '94287082'); assert.equal(totp(k, 1111111109000, 8), '07081804'); assert.equal(totp(k, 20000000000000, 8), '65353130'); });
+test('RFC 4226 hotp', () => { const k = Buffer.from('12345678901234567890'); assert.deepEqual([0,1,2].map(i => hotp(k, i)), ['755224','287082','359152']); });
+test('base32 + verify window', () => { const s = generateSecret(); assert.equal(base32Encode(base32Decode(s)), s); const k = base32Decode(s); const now = Date.now(); assert.ok(verifyTotp(s, totp(k, now), now)); assert.ok(verifyTotp(s, totp(k, now - 30000), now)); assert.ok(!verifyTotp(s, totp(k, now - 120000), now)); assert.ok(!verifyTotp(s, 'abcdef', now)); });
+test('password hash', async () => { const h = await hashPassword('correct horse', 1024); assert.ok(await verifyPassword('correct horse', h)); assert.ok(!(await verifyPassword('wrong', h))); });
+test('hmac known vector (RFC 4231 #2)', () => assert.equal(hmacSha256Hex('Jefe', 'what do ya want for nothing?'), '5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843'));
+test('money exact', () => { assert.equal(M.formatAmount(M.parseAmount('13.0042')), '13.0042'); assert.equal(M.addAmounts('13','0.0042'), '13.0042'); assert.equal(M.withOffset('15', 17), '15.0017'); assert.ok(M.amountEquals('13.0042', '13.004200000000000000')); assert.equal(M.fromTokenUnits('13004200000000000000'), '13.0042'); assert.equal(M.cmpAmounts('13.0041','13.0042'), -1); assert.throws(() => M.parseAmount('1e3')); assert.throws(() => M.parseAmount('-1')); });

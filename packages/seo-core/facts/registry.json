@@ -1,0 +1,258 @@
+[
+ {
+  "key": "verified_at",
+  "market": "*",
+  "value": "2026-10-14",
+  "source_url": "https://www.duolingo.com/help/use-a-promo-code",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "official_support_link",
+  "market": "*",
+  "value": "https://www.duolingo.com/help",
+  "source_url": "https://www.duolingo.com/help",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "auto_renew",
+  "market": "ar",
+  "value": "بحسب صفحة Duolingo الرسمية، جميع الاشتراكات تتجدد تلقائيًا ما لم تلغِها.",
+  "source_url": "https://www.duolingo.com/help/use-a-promo-code",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "account_eligibility",
+  "market": "ar",
+  "value": "بحسب صفحة Duolingo الرسمية، لا يمكن استخدام رمز العرض على اشتراك سوبر نشط، ويشترط ألا يكون عمرك أقل من 13 سنة.",
+  "source_url": "https://www.duolingo.com/help/use-a-promo-code",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "progress_on_upgrade",
+  "market": "ar",
+  "value": "بحسب Duolingo، عند بدء الاشتراك أو إنهائه لا يتأثر تقدمك في التعلم ولا سلسلة أيامك.",
+  "source_url": "https://www.duolingo.com/help/super-duolingo",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "super_ads",
+  "market": "ar",
+  "value": "بدون إعلانات.",
+  "source_url": "https://www.duolingo.com/help/super-duolingo",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "super_hearts",
+  "market": "ar",
+  "value": "قلوب غير محدودة (وقد لا تظهر هذه الميزة لبعض المستخدمين إذا كانوا ضمن اختبار تجريبي تجريه Duolingo).",
+  "source_url": "https://www.duolingo.com/help/super-duolingo",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "super_practice",
+  "market": "ar",
+  "value": "درس تدريب مخصص لأخطائك يُعرض عليك عند الخطأ.",
+  "source_url": "https://www.duolingo.com/help/super-duolingo",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "step_web_1",
+  "market": "ar",
+  "value": "افتح duolingo.com/redeem من متصفح ويب (يصلح على الهاتف أو التابلت أو الحاسوب).",
+  "source_url": "https://www.duolingo.com/help/use-a-promo-code",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "step_web_2",
+  "market": "ar",
+  "value": "أدخل الرمز واضغط «Redeem»، ثم اضغط «Claim offer» إن ظهر لك أنك مؤهل.",
+  "source_url": "https://www.duolingo.com/help/use-a-promo-code",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "step_web_3",
+  "market": "ar",
+  "value": "سجّل الدخول إلى حسابك أو أنشئ حسابًا، ثم اختر الخطة واتبع الشاشات حتى تبدأ استخدام سوبر.",
+  "source_url": "https://www.duolingo.com/help/use-a-promo-code",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "step_mobile_1",
+  "market": "ar",
+  "value": "بحسب Duolingo، يمكن استرداد الرمز حاليًا من متصفح الويب فقط، حتى لو كنت على الهاتف.",
+  "source_url": "https://www.duolingo.com/help/use-a-promo-code",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "step_mobile_2",
+  "market": "ar",
+  "value": "بعد الاشتراك تظهر مزايا سوبر في تطبيقي iOS وأندرويد وعلى الويب.",
+  "source_url": "https://www.duolingo.com/help/use-a-promo-code",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "error_1_text",
+  "market": "ar",
+  "value": "Promo code invalid! Your gift subscription might have been claimed already.",
+  "source_url": "https://www.duolingo.com/redeem-gift",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "error_1_cause",
+  "market": "ar",
+  "value": "انتهت صلاحية الرمز أو سبق استخدامه، أو كُتب بشكل خاطئ.",
+  "source_url": "https://www.duolingo.com/help/use-a-promo-code",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "error_1_fix",
+  "market": "ar",
+  "value": "أعد كتابة الرمز بعناية، وتأكد أنك مسجّل الدخول. إن كنت ضمن فصل دراسي في Duolingo فاترك الفصل ثم أعد إدخال الرمز.",
+  "source_url": "https://www.duolingo.com/help/use-a-promo-code",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "error_2_text",
+  "market": "ar",
+  "value": "لا يظهر خيار الاسترداد أو لا يُقبل الرمز",
+  "source_url": "https://www.duolingo.com/help/use-a-promo-code",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "error_2_cause",
+  "market": "ar",
+  "value": "لديك اشتراك سوبر نشط، أو أن عمرك أقل من 13 سنة.",
+  "source_url": "https://www.duolingo.com/help/use-a-promo-code",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "error_2_fix",
+  "market": "ar",
+  "value": "بحسب Duolingo لا يمكن استخدام الرمز على اشتراك نشط؛ راجع الدعم الرسمي إن كنت تظن أن حالتك غير ذلك.",
+  "source_url": "https://www.duolingo.com/help/use-a-promo-code",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "auto_renew",
+  "market": "en",
+  "value": "Duolingo states that all subscriptions auto-renew unless you cancel them.",
+  "source_url": "https://www.duolingo.com/help/use-a-promo-code",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "account_eligibility",
+  "market": "en",
+  "value": "Duolingo states that a promo code cannot be used on an active Super subscription, and that users under 13 are not eligible.",
+  "source_url": "https://www.duolingo.com/help/use-a-promo-code",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "family_size",
+  "market": "*",
+  "value": "Super Family Plan: the manager plus 5 invited members (6 accounts)",
+  "source_url": "https://www.duolingo.com/help/family-plan",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "family_invite_rule",
+  "market": "*",
+  "value": "Anyone can be invited, in any location or language, except someone with an active paid Duolingo subscription",
+  "source_url": "https://www.duolingo.com/help/family-plan",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "family_no_resale",
+  "market": "*",
+  "value": "Family Plan slots cannot be resold for money or items of value; Duolingo may block or terminate plans where slots were resold",
+  "source_url": "https://www.duolingo.com/help/family-plan",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "family_manager",
+  "market": "*",
+  "value": "Only the family manager manages the plan and invites or removes members; progress and streak are unaffected when joining or leaving",
+  "source_url": "https://www.duolingo.com/help/family-plan",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "max_includes_super",
+  "market": "*",
+  "value": "Duolingo Max includes all Super benefits plus AI features: Roleplay and Video Call with Lily",
+  "source_url": "https://www.duolingo.com/help/what-is-duolingo-max",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "max_platform",
+  "market": "*",
+  "value": "Max is available in the iOS and Android apps and cannot be purchased on the web; some AI features are not available in every course",
+  "source_url": "https://www.duolingo.com/help/what-is-duolingo-max",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "max_family",
+  "market": "*",
+  "value": "Max can be bought as an individual subscription or as a family plan shared with 5 other users",
+  "source_url": "https://www.duolingo.com/help/what-is-duolingo-max",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "super_hearts_test",
+  "market": "*",
+  "value": "Unlimited Hearts may be missing for some users because Duolingo runs tests on subscriptions",
+  "source_url": "https://www.duolingo.com/help/super-duolingo",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "super_classroom",
+  "market": "*",
+  "value": "Super is not available while enrolled in a Duolingo classroom; leave the classroom to subscribe",
+  "source_url": "https://www.duolingo.com/help/super-duolingo",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "super_bulk",
+  "market": "*",
+  "value": "Employers can buy bulk Super subscriptions through Duolingo for Business",
+  "source_url": "https://www.duolingo.com/help/super-duolingo",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ },
+ {
+  "key": "super_how_to_subscribe",
+  "market": "*",
+  "value": "In the app or on the web: sign in, open Shop, tap Get Super, choose a plan, confirm. The platform you subscribe on is where you manage it",
+  "source_url": "https://www.duolingo.com/help/super-duolingo",
+  "verified_at": "2026-10-14",
+  "expires_at": "2027-01-12"
+ }
+]

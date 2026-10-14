@@ -1,0 +1,4 @@
+{ "name": "@lingora/web", "version": "1.0.0", "private": true,
+  "scripts": { "dev": "next dev -p 3000", "build": "next build", "start": "next start -p 3000" },
+  "dependencies": { "@lingora/shared": "1.0.0", "next": "15.5.27", "react": "19.1.1", "react-dom": "19.1.1", "marked": "16.3.0" },
+  "devDependencies": { "typescript": "5.9.2", "@types/node": "22.7.5", "@types/react": "19.1.13", "@types/pg": "8.15.5" } }

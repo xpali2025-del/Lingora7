@@ -1,0 +1,29 @@
+{
+  "name": "lingora",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "test": "node --test packages/shared/test/*.test.js apps/worker/test/*.test.js packages/seo-core/test/*.test.js",
+    "content:check": "node scripts/content-check.js",
+    "dev:db": "node scripts/dev-db.js",
+    "db:migrate": "node scripts/migrate.js",
+    "db:seed-admin": "node scripts/create-admin.js",
+    "web:dev": "npm -w apps/web run dev",
+    "web:build": "npm -w apps/web run build",
+    "web:start": "npm -w apps/web run start",
+    "worker:start": "node apps/worker/src/index.js",
+    "sim:deposit": "node apps/worker/src/simulate.js",
+    "check": "npm test && npm run content:check",
+    "seo:check": "node scripts/check-site.mjs",
+    "indexnow": "node scripts/indexnow.js"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.3.14",
+    "@electric-sql/pglite-socket": "0.0.19"
+  }
+}

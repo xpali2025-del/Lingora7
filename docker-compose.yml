@@ -1,0 +1,23 @@
+# Production-like stack: PostgreSQL + web + worker. Fill .env first (cp .env.example .env).
+# The worker must run from ONE static IP (whitelist it on the Binance API key). Run exactly one worker replica.
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment: { POSTGRES_USER: lingora, POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-change-me}", POSTGRES_DB: lingora }
+    volumes: [pgdata:/var/lib/postgresql/data]
+    ports: ["127.0.0.1:5432:5432"]
+  web:
+    build: { context: ., target: web, args: { SITE_URL: "${SITE_URL:-https://lingora.world}" } }
+    restart: unless-stopped
+    env_file: .env
+    environment: { DATABASE_URL: "postgres://lingora:${POSTGRES_PASSWORD:-change-me}@db:5432/lingora" }
+    depends_on: [db]
+    ports: ["127.0.0.1:3000:3000"]
+  worker:
+    build: { context: ., target: worker }
+    restart: unless-stopped
+    env_file: .env
+    environment: { DATABASE_URL: "postgres://lingora:${POSTGRES_PASSWORD:-change-me}@db:5432/lingora" }
+    depends_on: [db]
+volumes: { pgdata: {} }

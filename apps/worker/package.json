@@ -1,0 +1,1 @@
+{ "name": "@lingora/worker", "version": "1.0.0", "type": "module", "dependencies": { "@lingora/shared": "1.0.0" } }
