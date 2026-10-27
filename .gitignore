@@ -3,3 +3,4 @@ node_modules
 .env
 .devdb
 *.log
+next-env.d.ts
