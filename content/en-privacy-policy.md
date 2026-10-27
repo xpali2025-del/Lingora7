@@ -3,7 +3,7 @@ url: /en/privacy-policy/
 locale: en
 kind: policy
 hreflang_group: privacy
-title: Privacy Policy | Lingora
+title: Privacy Policy: How Lingora Handles Your Data | Lingora
 description: Lingora's privacy policy: the data we collect when you buy (email and payment details), how we protect it, how long we keep it and your rights.
 status: LIVE
 last_modified: 2026-10-14

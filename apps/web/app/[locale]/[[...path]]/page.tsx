@@ -34,6 +34,8 @@ export default async function Page({ params }: Props) {
   const info = mc && p.kind === 'market' ? await marketInfo(mc) : null;
   const price = info?.price ?? p.priceUsdt;   // database wins over the Markdown value
   const ld: object[] = [
+    { '@context': 'https://schema.org', '@type': 'WebPage', '@id': SITE_URL + p.url, url: SITE_URL + p.url, name: p.title, description: p.description, inLanguage: p.locale,
+      dateModified: p.lastmod, isPartOf: { '@type': 'WebSite', name: 'Lingora', url: SITE_URL + '/' }, publisher: { '@type': 'Organization', name: 'Lingora', url: SITE_URL + '/' } },
     { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
       { '@type': 'ListItem', position: 1, name: ({ ar: 'الرئيسية', hi: 'होम', fr: 'Accueil', zh: '首页', en: 'Home' } as Record<string, string>)[p.lang], item: SITE_URL + '/' },
       { '@type': 'ListItem', position: 2, name: p.h1, item: SITE_URL + p.url }] },

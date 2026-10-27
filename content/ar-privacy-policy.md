@@ -3,8 +3,8 @@ url: /ar/privacy-policy/
 locale: ar
 kind: policy
 hreflang_group: privacy
-title: سياسة الخصوصية | Lingora
-description: سياسة خصوصية Lingora: ما البيانات التي نجمعها عند الشراء (البريد ومعلومات الدفع)، وكيف نحميها ومدة الاحتفاظ بها وحقوقك.
+title: سياسة الخصوصية: كيف تحمي Lingora بياناتك | Lingora
+description: سياسة خصوصية Lingora: ما البيانات التي نجمعها عند الشراء (البريد ومعلومات الدفع)، وكيف نحميها وكم نحتفظ بها، وما حقوقك في بياناتك.
 status: LIVE
 last_modified: 2026-10-14
 ---

@@ -22,6 +22,9 @@ const seen = new Map();
 for (const f of readdirSync(path.join(root, 'content')).filter(f => f.endsWith('.md'))) {
   const md = readFileSync(path.join(root, 'content', f), 'utf8'); const fm = frontMatter(md);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(fm.last_modified || '')) { console.log(`FAIL ${f}: last_modified (YYYY-MM-DD) missing`); bad++; }
+  const heads = [...md.replace(/^---[\s\S]*?---/, '').matchAll(/^#{2,4} (.+)$/gm)].map(m => m[1].trim());
+  for (const h of new Set(heads.filter((x, i) => heads.indexOf(x) !== i))) { console.log(`FAIL ${f}: duplicate heading "${h}"`); bad++; }
+  if (String(fm.description || '').length < 70) { console.log(`FAIL ${f}: description shorter than 70 chars`); bad++; }
   const lang = String(fm.locale).slice(0, 2);
   for (const k of [fm.primary_keyword, ...list(fm.secondary_keywords)].filter(Boolean)) {
     const key = lang + '|' + k.toLowerCase();

@@ -4,7 +4,7 @@ locale: en
 kind: policy
 hreflang_group: about
 title: About Lingora | An Independent Learning-Subscription Provider
-description: Meet Lingora: our mission, vision and purpose, why learners choose us, how we work and how to reach us. An independent service provider, not affiliated with Duolingo.
+description: Meet Lingora: our mission, why learners choose us, how we work and how to reach us. An independent provider, not affiliated with Duolingo.
 status: LIVE
 last_modified: 2026-10-14
 ---
