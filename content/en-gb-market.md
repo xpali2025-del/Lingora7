@@ -20,7 +20,7 @@ Planning a trip to Spain, Italy or France, or brushing up a language for work? D
 
 > **Disclosure:** Lingora is an independent reseller, not affiliated with or authorised by Duolingo.
 
-## Price and payment for UK buyers
+## Duolingo Super UK price and payment
 
 | Item | Detail |
 |---|---|
@@ -38,7 +38,7 @@ We do not quote a pound sterling figure because the USDT rate moves. Check the e
 - **Commuters:** short lessons on the train or the bus, without adverts in the way.
 - **Returning learners:** pick a language back up after a gap from school.
 
-## A twelve-week plan for a holiday language
+## Duolingo Super for holidays: a twelve-week plan
 
 Many UK learners start a few months before a trip and stall by week three. This plan is only a suggestion, and the point is consistency rather than speed:
 

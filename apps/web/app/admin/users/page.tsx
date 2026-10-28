@@ -18,6 +18,12 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ m
         <div className="field"><label>Role</label><select name="role">{(ROLES as string[]).map(r => <option key={r}>{r}</option>)}</select></div>
         <button className="btn">Create (2FA secret is shown once)</button>
       </ActionForm>
+      <h2>Add a Google user</h2>
+      <ActionForm action="user_create_google" back="/admin/users/" user={user}>
+        <div className="field"><label>Google e-mail (they sign in with “Continue with Google”, no password)</label><input name="email" type="email" required /></div>
+        <div className="field"><label>Role</label><select name="role">{(ROLES as string[]).map(r => <option key={r}>{r}</option>)}</select></div>
+        <button className="btn">Add</button>
+      </ActionForm>
       <h2>Change my password</h2>
       <ActionForm action="password_change" back="/admin/users/" user={user}>
         <div className="field"><label>Current</label><input name="current" type="password" required autoComplete="current-password" /></div>

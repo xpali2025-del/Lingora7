@@ -70,3 +70,25 @@ test('e2e: alerts fire for low stock and are throttled', async () => {
   await runOnce(ctx); await runOnce(ctx);
   assert.equal(alerter.sentMessages.filter(m => /Low code stock/.test(m)).length, 1);
 });
+
+test('tick: runs one pass per interval no matter how many callers; later callers are skipped, then it runs again', async () => {
+  const { db, ctx } = await setup();
+  const { tick } = await import('../src/loop.js');
+  const first = await tick(ctx, { minIntervalSec: 60 });
+  assert.equal(first.skipped, false);
+  assert.equal((await tick(ctx, { minIntervalSec: 60 })).skipped, true);
+  assert.equal((await Promise.all([tick(ctx, { minIntervalSec: 60 }), tick(ctx, { minIntervalSec: 60 })])).every(r => r.skipped), true);
+  await db.query(`UPDATE settings SET value = to_jsonb((extract(epoch from now())::bigint - 120)) WHERE key='tick_lock'`);
+  assert.equal((await tick(ctx, { minIntervalSec: 60 })).skipped, false, 'an old lock does not block the next pass');
+});
+test('tick: a payment is detected and the delivery e-mail goes out without any long-running worker', async () => {
+  const { db, sender, ctx } = await setup();
+  const { tick } = await import('../src/loop.js');
+  const o = await C.createOrder(db, { marketCode: 'ye' });
+  await db.query(`INSERT INTO mock_deposits (tx_hash, amount, to_address, confirmations) VALUES ('0xtick1',$1,$2,30)`, [o.amount, o.address]);
+  await tick(ctx, { minIntervalSec: 0 });
+  assert.equal(await st(db, o.ref), 'awaiting_email');
+  await C.submitEmail(db, { ref: o.ref, key: o.key, email: 'y@b.co', emailConfirm: 'y@b.co', key32: KEY });
+  await tick(ctx, { minIntervalSec: 0 });
+  assert.equal(await st(db, o.ref), 'fulfilled'); assert.ok(sender.sent.find(m => m.to === 'y@b.co'));
+});

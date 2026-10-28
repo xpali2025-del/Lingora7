@@ -23,6 +23,9 @@ for (const p of paths) {
   if (!T || T.length > 70) F(p, `title length ${T?.length}`);
   if (!D || D.length < 70 || D.length > 170) F(p, `description length ${D?.length}`);
   if ((h.match(/<h1[ >]/g) || []).length !== 1) F(p, 'must have exactly one <h1>');
+  const hd = [...h.matchAll(/<h([2-4])[^>]*>([\s\S]*?)<\/h\1>/g)].map(m => m[2].replace(/<[^>]+>/g, '').trim());
+  for (const x of new Set(hd.filter((y, i) => hd.indexOf(y) !== i))) F(p, `duplicate heading "${x}"`);
+  if (!/<meta property="og:url"/.test(h)) F(p, 'og:url missing');
   if (C !== SITE + p) F(p, `canonical ${C} != ${SITE + p}`);
   if (/localhost|127\.0\.0\.1/.test(h) && !/localhost/.test(SITE)) F(p, 'localhost leaked into HTML');
   if (/noindex/.test(attr(h, /<meta name="robots" content="([^"]*)/) || '')) F(p, 'noindex page listed in sitemap');
@@ -52,7 +55,7 @@ for (const l of inbound.keys()) if (/^\/admin/.test(l)) F(l, 'a public page link
 // robots + 404 behaviour
 const robots = await (await fetch(base + '/robots.txt')).text();
 if (!/Sitemap:/i.test(robots)) F('/robots.txt', 'no Sitemap line');
-for (const bad of ['/order/']) if (!robots.includes('Disallow: ' + bad)) F('/robots.txt', `missing Disallow ${bad}`);
+for (const bad of ['/order/', '/account/', '/ar/review/', '/hi/review/', '/fr/review/', '/zh/review/']) if (!robots.includes('Disallow: ' + bad)) F('/robots.txt', `missing Disallow ${bad}`);
 if (robots.includes('/admin')) F('/robots.txt', 'must not advertise the admin path (it is protected by noindex + login)');
 const nf = await fetch(base + '/definitely-not-a-page/'); if (nf.status !== 404) F('/definitely-not-a-page/', `expected 404, got ${nf.status}`);
 const fav = await fetch(base + '/favicon.ico'); if (fav.status !== 200) F('/favicon.ico', `status ${fav.status}`);

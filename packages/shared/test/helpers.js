@@ -14,6 +14,8 @@ export async function makeDb({ configureProvider = true } = {}) {
   const db = createPgliteDb(pg);
   for (const f of readdirSync(path.join(ROOT, 'db/migrations')).sort()) await db.exec(readFileSync(path.join(ROOT, 'db/migrations', f), 'utf8'));
   await db.exec(readFileSync(path.join(ROOT, 'db/seed.sql'), 'utf8'));
+  // Most tests create orders without importing codes; the stock guard has its own tests.
+  await db.exec(`INSERT INTO settings (key,value) VALUES ('block_orders_when_out_of_stock','false') ON CONFLICT (key) DO UPDATE SET value='false'`);
   if (configureProvider) {
     await db.query(`UPDATE payment_providers SET enabled=TRUE, public_config=$1 WHERE type='mock'`,
       [JSON.stringify({ receivingAddress: ADDR, network: 'BSC', asset: 'USDT' })]);

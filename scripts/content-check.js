@@ -22,10 +22,14 @@ const seen = new Map();
 for (const f of readdirSync(path.join(root, 'content')).filter(f => f.endsWith('.md'))) {
   const md = readFileSync(path.join(root, 'content', f), 'utf8'); const fm = frontMatter(md);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(fm.last_modified || '')) { console.log(`FAIL ${f}: last_modified (YYYY-MM-DD) missing`); bad++; }
+  const heads = [...md.replace(/^---[\s\S]*?---/, '').matchAll(/^#{2,4} (.+)$/gm)].map(m => m[1].trim());
+  for (const h of new Set(heads.filter((x, i) => heads.indexOf(x) !== i))) { console.log(`FAIL ${f}: duplicate heading "${h}"`); bad++; }
+  if (String(fm.description || '').length < 70) { console.log(`FAIL ${f}: description shorter than 70 chars`); bad++; }
   const lang = String(fm.locale).slice(0, 2);
   for (const k of [fm.primary_keyword, ...list(fm.secondary_keywords)].filter(Boolean)) {
     const key = lang + '|' + k.toLowerCase();
     if (seen.has(key)) { console.log(`FAIL ${f}: keyword "${k}" also targeted by ${seen.get(key)} (cannibalization)`); bad++; } else seen.set(key, f);
+    if (fm.primary_keyword !== k && !authoredText(md).toLowerCase().includes(k.toLowerCase())) console.log(`WARN ${f}: secondary keyword "${k}" not present verbatim in body`);
     if (f === 'ar-price.md' || fm.kind === 'guide' || fm.kind === 'market') {
       if (fm.primary_keyword === k && !authoredText(md).toLowerCase().includes(k.toLowerCase())) { console.log(`WARN ${f}: primary keyword "${k}" not present verbatim in body`); }
     }
@@ -37,5 +41,10 @@ for (const f of readdirSync(path.join(root, 'content')).filter(f => f.endsWith('
     const code = fm.url.replace(/\//g, '');
     if (seedPrice[code] !== undefined && Number(fm.price_usdt) !== seedPrice[code]) { console.log(`FAIL ${f}: price_usdt ${fm.price_usdt} != seed ${seedPrice[code]}`); bad++; }
   }
+}
+const livePrices = new Set(Object.values(seedPrice));
+for (const f of readdirSync(path.join(root, 'content')).filter(f => f.endsWith('.md'))) {
+  const md = readFileSync(path.join(root, 'content', f), 'utf8'); if (frontMatter(md).kind === 'market') continue;
+  for (const m of md.matchAll(/(\d+(?:\.\d+)?)\s*USDT/g)) if (!livePrices.has(Number(m[1]))) { console.log(`FAIL ${f}: price "${m[0]}" is not a market price in db/seed.sql`); bad++; }
 }
 console.log(bad ? 'content-check FAILED' : 'content-check OK'); process.exit(bad ? 1 : 0);

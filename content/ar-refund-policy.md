@@ -3,8 +3,8 @@ url: /ar/refund-policy/
 locale: ar
 kind: policy
 hreflang_group: refund
-title: سياسة الاسترجاع | Lingora
-description: سياسة استرجاع Lingora لروابط التفعيل الرقمية: متى نستبدل الرابط أو نرد المبلغ، وكيف تقدّم طلبك، وطريقة الرد بعملة USDT.
+title: سياسة الاسترجاع: متى نستبدل الرابط أو نرد المبلغ | Lingora
+description: سياسة استرجاع Lingora لروابط التفعيل الرقمية: متى نستبدل الرابط أو نرد المبلغ، وكيف تقدّم طلبك، وكيف يُدفع الرد بعملة USDT.
 status: LIVE
 last_modified: 2026-10-14
 ---

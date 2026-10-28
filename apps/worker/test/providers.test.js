@@ -79,8 +79,54 @@ test('onchain: rescans with a reorg margin from the cursor and chunks large rang
   const node = fakeNode({ latest: 10_000 });
   await onchainProvider.fetchEvents(CFG, { cursor: { block: 3_000 }, fetchImpl: node.fetchImpl });
   const reqs = node.calls.filter(c => c.method === 'eth_getLogs').map(c => [parseInt(c.params[0].fromBlock, 16), parseInt(c.params[0].toBlock, 16)]);
-  assert.equal(reqs[0][0], 10_000 - 5000);                       // capped to the last 5000 blocks
+  assert.equal(reqs[0][0], 3_000 - 25);                          // resumes from the cursor minus the reorg margin, however old it is
   assert.ok(reqs.every(([a, b]) => b - a < 2000)); assert.equal(reqs.at(-1)[1], 10_000);
+});
+test('onchain: a very long gap is caught up over several passes; the cursor only moves to what was scanned', async () => {
+  const node = fakeNode({ latest: 200_000, logs: [log(5_000, '0xold', 0, '13001000000000000000')] });
+  const cfg = { ...CFG, maxScanBlocks: 10_000 };
+  let r = await onchainProvider.fetchEvents(cfg, { cursor: { block: 4_000 }, fetchImpl: node.fetchImpl });
+  assert.deepEqual(r.events.map(e => e.txRef), ['0xold:0'], 'a payment made during the gap is not skipped');
+  assert.equal(r.cursor.block, 3_975 + 10_000);
+  r = await onchainProvider.fetchEvents(cfg, { cursor: r.cursor, fetchImpl: node.fetchImpl });
+  assert.ok(r.cursor.block > 13_975 && r.cursor.block <= 200_000);
+});
+test('onchain: first run looks back about 4000 blocks', async () => {
+  const node = fakeNode({ latest: 50_000 });
+  await onchainProvider.fetchEvents(CFG, { fetchImpl: node.fetchImpl });
+  assert.equal(parseInt(node.calls.find(c => c.method === 'eth_getLogs').params[0].fromBlock, 16), 46_000);
+});
+// ---- second-node verification and default node ----
+function twoNodes({ primaryLogs, verifierReceipt, verifierFails = false }) {
+  const primary = fakeNode({ latest: 1000, logs: primaryLogs }); const seen = [];
+  const fetchImpl = async (url, init) => {
+    seen.push(url);
+    if (url === 'http://verify') {
+      if (verifierFails) throw new Error('verify node down');
+      const { method } = JSON.parse(init.body);
+      return jsonRes({ jsonrpc: '2.0', id: 1, result: method === 'eth_getTransactionReceipt' ? verifierReceipt : '0x38' });
+    }
+    return primary.fetchImpl(url, init);
+  };
+  return { fetchImpl, seen };
+}
+const goodLog = log(990, '0xaaa', 3, '13004200000000000000');
+const receiptOf = l => ({ status: '0x1', logs: [{ address: CFG.usdtContract, logIndex: l.logIndex, data: l.data, topics: l.topics }] });
+test('onchain: with a verification node, a payment is accepted only when the second node shows the same log', async () => {
+  const cfg = { ...CFG, verifyRpcUrl: 'http://verify' };
+  const ok = await onchainProvider.fetchEvents(cfg, twoNodes({ primaryLogs: [goodLog], verifierReceipt: receiptOf(goodLog) }));
+  assert.equal(ok.events.length, 1);
+  const forged = { ...receiptOf(goodLog), logs: [{ ...receiptOf(goodLog).logs[0], data: '0x' + (1n).toString(16).padStart(64, '0') }] };
+  await assert.rejects(onchainProvider.fetchEvents(cfg, twoNodes({ primaryLogs: [goodLog], verifierReceipt: forged })), /disagree/);
+  await assert.rejects(onchainProvider.fetchEvents(cfg, twoNodes({ primaryLogs: [goodLog], verifierReceipt: null })), /disagree/);
+  await assert.rejects(onchainProvider.fetchEvents(cfg, twoNodes({ primaryLogs: [goodLog], verifierReceipt: { ...receiptOf(goodLog), status: '0x0' } })), /disagree/);
+  await assert.rejects(onchainProvider.fetchEvents(cfg, twoNodes({ primaryLogs: [goodLog], verifierFails: true })), /verify node down/, 'verifier outage stops the scan instead of trusting one node');
+});
+test('onchain: uses the free public node when none is configured', async () => {
+  const node = fakeNode({ latest: 1000 }); const urls = [];
+  const { rpcUrl, ...noRpc } = CFG;
+  await onchainProvider.fetchEvents(noRpc, { fetchImpl: (u, i) => { urls.push(u); return node.fetchImpl(u, i); } });
+  assert.ok(urls.length > 0 && urls.every(u => u === 'https://bsc-rpc.publicnode.com'));
 });
 test('onchain: testConnection checks chain id 56, contract code and 18 decimals; refuses a missing contract address', async () => {
   assert.equal((await onchainProvider.testConnection(CFG, fakeNode())).ok, true);

@@ -1,8 +1,8 @@
-import { approvedReviews, getSetting } from '@lingora/shared';
+import { approvedReviews, getSetting, sellableStock } from '@lingora/shared';
 import { db } from './server';
 
 export type PubReview = { name: string; rating: number; body: string; reply?: string | null; country?: string | null; at: string };
-export type MarketInfo = { price: number; country: string | null; reviews: PubReview[] };
+export type MarketInfo = { price: number; country: string | null; reviews: PubReview[]; inStock: boolean };
 
 /**
  * Live data for a market page, read at build time and refreshed by ISR (revalidate) and on-demand revalidation
@@ -15,7 +15,7 @@ export async function marketInfo(code: string): Promise<MarketInfo | null> {
     const m = (await d.query(`SELECT price_usdt::text p, country_code FROM markets WHERE code=$1 AND enabled AND status='live'`, [code])).rows[0];
     if (!m) return null;
     const rows = await approvedReviews(d, { marketCode: code, limit: 20 });
-    return { price: Number(m.p), country: m.country_code, reviews: rows.map((r: any) => ({ name: r.display_name, rating: r.rating, body: r.body, reply: r.reply, country: r.country_code, at: new Date(r.created_at).toISOString().slice(0, 10) })) };
+    return { price: Number(m.p), country: m.country_code, inStock: (await sellableStock(d)) > 0, reviews: rows.map((r: any) => ({ name: r.display_name, rating: r.rating, body: r.body, reply: r.reply, country: r.country_code, at: new Date(r.created_at).toISOString().slice(0, 10) })) };
   } catch (e) { console.warn('marketInfo fallback:', (e as Error).message); return null; }
 }
 
@@ -43,4 +43,16 @@ export function contactListHtml(c: Contact, lang: 'ar' | 'en'): string {
   const soc = SOCIALS.filter(([k]) => c[k]).map(([k, n]) => `<a href="${esc(String(c[k]))}" rel="me noopener nofollow">${n}</a>`);
   if (soc.length) rows.push(li(L.social, soc.join(' · ')));
   return `<ul>${rows.join('')}</ul>`;
+}
+
+export type PayBlock = { title: string; lines: string[] };
+/** Local payment accounts (e.g. Yemen) typed by the owner in the admin: stored in the database, never in the repository. */
+export async function getYemenPayments(): Promise<PayBlock[]> {
+  if (!process.env.DATABASE_URL) return [];
+  try { const v = await getSetting(db(), 'ye_payment_methods', []); return Array.isArray(v) ? v : []; }
+  catch (e) { console.warn('getYemenPayments fallback:', (e as Error).message); return []; }
+}
+export function paymentBlocksHtml(blocks: PayBlock[], emptyText: string): string {
+  if (!blocks.length) return `<p class="notice">${esc(emptyText)}</p>`;
+  return `<div class="grid">${blocks.map(b => `<div class="card"><h3>${esc(b.title)}</h3>${b.lines.map(l => `<p dir="auto">${esc(l)}</p>`).join('')}</div>`).join('')}</div>`;
 }

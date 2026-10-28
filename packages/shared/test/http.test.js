@@ -23,3 +23,11 @@ test('origin check uses the public host, ignores a rewritten Host header in prod
 test('redirects are built on the public origin in production', () => {
   assert.equal(publicUrl('/admin/', { siteUrl: 'https://lingora.world', requestUrl: 'http://internal:3000/x', env: { NODE_ENV: 'production' } }).href, 'https://lingora.world/admin/');
 });
+
+import { sslOptions } from '../src/db.js';
+test('db ssl: off by default, verified with a CA when asked, no-verify only when explicitly chosen', () => {
+  assert.equal(sslOptions({}), undefined);
+  assert.deepEqual(sslOptions({ DB_SSL: 'require' }), { rejectUnauthorized: true });
+  assert.deepEqual(sslOptions({ DB_SSL: 'require', DB_SSL_CA: 'LINE1\\nLINE2' }), { ca: 'LINE1\nLINE2', rejectUnauthorized: true });
+  assert.deepEqual(sslOptions({ DB_SSL: 'no-verify' }), { rejectUnauthorized: false });
+});

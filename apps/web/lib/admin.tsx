@@ -16,7 +16,7 @@ export async function requireUser(): Promise<{ id: number; email: string; role: 
 }
 export const fmt = (d: unknown) => (d ? new Date(d as string).toISOString().replace('T', ' ').slice(0, 19) : '—');
 
-const NAV: [string, string][] = [['/admin/', 'Overview'], ['/admin/orders/', 'Orders'], ['/admin/payments/', 'Payments'], ['/admin/codes/', 'Codes'], ['/admin/providers/', 'Payment settings'],
+const NAV: [string, string][] = [['/admin/', 'Overview'], ['/admin/orders/', 'Orders'], ['/admin/payments/', 'Payments'], ['/admin/topups/', 'Top-ups & wallets'], ['/admin/codes/', 'Codes'], ['/admin/providers/', 'Payment settings'],
   ['/admin/markets/', 'Markets & settings'], ['/admin/contact/', 'Contact & social'], ['/admin/reviews/', 'Reviews'], ['/admin/emails/', 'Emails'], ['/admin/users/', 'Users'], ['/admin/audit/', 'Audit log']];
 
 export function Shell({ user, title, msg, children }: { user: { email: string; role: string }; title: string; msg?: string; children: ReactNode }) {

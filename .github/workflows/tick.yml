@@ -1,0 +1,23 @@
+# Free replacement for a always-on worker: every ~5 minutes ask the site to run one pass of its background work
+# (detect USDT payments, send delivery e-mails, expire orders, send alerts). GitHub's scheduler is best-effort and can be
+# late; the order page also triggers a pass while a customer is waiting, so a late tick never blocks a sale.
+# Set two repository secrets: SITE_URL (https://your-domain) and CRON_SECRET (the same value as on the server).
+# GitHub pauses scheduled workflows after 60 days without repository activity: push any small commit to wake it.
+name: tick
+on:
+  schedule: [{ cron: '*/5 * * * *' }]
+  workflow_dispatch:
+concurrency: { group: tick, cancel-in-progress: false }
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Ask the site to run one pass
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          # A sleeping free web service needs up to a minute to wake: allow for it and retry.
+          curl -fsS --max-time 100 --retry 2 --retry-delay 10 --retry-all-errors \
+            -X POST -H "Authorization: Bearer ${CRON_SECRET}" "${SITE_URL%/}/api/cron/tick/"

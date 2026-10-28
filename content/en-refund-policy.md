@@ -3,7 +3,7 @@ url: /en/refund-policy/
 locale: en
 kind: policy
 hreflang_group: refund
-title: Refund Policy | Lingora
+title: Refund Policy: When We Replace or Refund a Link | Lingora
 description: Lingora's refund policy for digital redeem links: when we replace a link or refund you, how to submit a request, and how refunds are paid in USDT.
 status: LIVE
 last_modified: 2026-10-14

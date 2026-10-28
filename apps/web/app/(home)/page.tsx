@@ -2,12 +2,14 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CountryPicker } from '@/components/Chrome';
 import { SITE_URL } from '@/lib/content';
+import { OG_IMAGE } from '@/lib/meta';
 import { getContact, SOCIALS } from '@/lib/data';
 
 export const metadata: Metadata = {
   title: 'Lingora | Duolingo Super Activation Links · دولينجو سوبر',
-  description: 'Independent reseller of 12-month Duolingo Super activation links, paid in USDT (BEP20). Pick your country for price and steps. موقع مستقل لروابط تفعيل دولينجو سوبر.',
+  description: 'Independent reseller of 12-month Duolingo Super activation links, paid in USDT (BEP20). Pick your country for price and steps. موقع مستقل لروابط دولينجو سوبر.',
   alternates: { canonical: SITE_URL + '/' },
+  openGraph: { title: 'Lingora | Duolingo Super Activation Links · دولينجو سوبر', description: 'Independent reseller of 12-month Duolingo Super activation links, paid in USDT (BEP20). Pick your country for price and steps.', url: SITE_URL + '/', locale: 'en_US', siteName: 'Lingora', type: 'website', images: [OG_IMAGE] },
 };
 export default async function Home() {
   const c: any = await getContact(); const SUPPORT_EMAIL = c.email;
