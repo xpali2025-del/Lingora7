@@ -22,7 +22,7 @@ Pour activer Duolingo Super sans erreur, suivez ces étapes. **Dernière vérifi
 - Vous devez avoir au moins 13 ans.
 - Préparez un navigateur web. D'après Duolingo, l'activation se fait pour l'instant uniquement depuis un navigateur.
 
-## Les étapes
+## Les étapes d'un code promo Duolingo
 
 1. Ouvrez duolingo.com/redeem dans un navigateur web, sur téléphone, tablette ou ordinateur.
 2. Saisissez le code et appuyez sur « Redeem », puis sur « Claim offer » si l'option s'affiche.
@@ -32,7 +32,7 @@ Pour activer Duolingo Super sans erreur, suivez ces étapes. **Dernière vérifi
 
 L'activation passe par le navigateur, même sur mobile. Une fois Super démarré, ses avantages apparaissent dans les applications iOS et Android ainsi que sur le web : vous rouvrez simplement l'application comme d'habitude.
 
-## Erreurs fréquentes et solutions
+## Lien Duolingo Super ne fonctionne pas : erreurs fréquentes
 
 | Ce que vous voyez | Cause probable | Solution |
 |---|---|---|

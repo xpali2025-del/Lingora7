@@ -29,6 +29,7 @@ for (const f of readdirSync(path.join(root, 'content')).filter(f => f.endsWith('
   for (const k of [fm.primary_keyword, ...list(fm.secondary_keywords)].filter(Boolean)) {
     const key = lang + '|' + k.toLowerCase();
     if (seen.has(key)) { console.log(`FAIL ${f}: keyword "${k}" also targeted by ${seen.get(key)} (cannibalization)`); bad++; } else seen.set(key, f);
+    if (fm.primary_keyword !== k && !authoredText(md).toLowerCase().includes(k.toLowerCase())) console.log(`WARN ${f}: secondary keyword "${k}" not present verbatim in body`);
     if (f === 'ar-price.md' || fm.kind === 'guide' || fm.kind === 'market') {
       if (fm.primary_keyword === k && !authoredText(md).toLowerCase().includes(k.toLowerCase())) { console.log(`WARN ${f}: primary keyword "${k}" not present verbatim in body`); }
     }

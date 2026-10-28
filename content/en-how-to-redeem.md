@@ -22,7 +22,7 @@ hreflang_group: howto
 - You must be at least 13 years old.
 - Have a web browser ready. According to Duolingo, redemption currently works from a browser only.
 
-## Redemption steps
+## Redeem Duolingo promo code: step by step
 
 1. Open duolingo.com/redeem in a web browser (this works on a phone, tablet or computer).
 2. Enter the code and press "Redeem", then press "Claim offer" if it shows you are eligible.
@@ -32,7 +32,7 @@ hreflang_group: howto
 
 Redemption happens in the browser, even when you are on a phone. Once you are subscribed, Super features appear in the iOS and Android apps and on the web.
 
-## Common errors and fixes
+## Duolingo Super link not working? Common errors and fixes
 
 | What you see | Likely cause | Fix |
 |---|---|---|

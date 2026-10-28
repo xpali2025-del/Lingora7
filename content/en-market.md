@@ -32,7 +32,7 @@ Super removes ads and gives you unlimited Hearts, so a missed answer never stops
 
 Sending on any other network can lose your funds, so check the network before you confirm.
 
-## How paying with USDT works here
+## Buy Duolingo Super with USDT: how payment works
 
 1. Press the buy button on this page. We create an order and show a private order page.
 2. Send the exact amount shown, decimals included, on the BEP20 network to the address on that page. Every order has its own amount, which is how we match your payment automatically.

@@ -20,7 +20,7 @@ Si vous apprenez l'anglais pour votre travail, vos études ou un séjour à l'é
 
 > **En toute transparence :** Lingora est un revendeur indépendant. Nous ne sommes ni affiliés à Duolingo ni autorisés par lui.
 
-## Prix et paiement
+## Prix Duolingo Super et paiement
 
 | Point | Détail |
 |---|---|
@@ -32,7 +32,7 @@ Si vous apprenez l'anglais pour votre travail, vos études ou un séjour à l'é
 
 Le paiement se fait uniquement en USDT, pas par carte bancaire. Nous n'affichons pas de prix en euros, car le taux de change varie chaque jour et un montant en euros serait vite faux. Chaque commande reçoit un montant unique avec décimales, par exemple 15,0042, qui permet à notre système de reconnaître automatiquement votre paiement. Envoyez donc exactement le montant indiqué sur la page de commande, décimales comprises. Avant de payer en cryptomonnaie, vérifiez les règles et la fiscalité qui s'appliquent dans votre pays.
 
-## Avant d'acheter
+## Acheter Duolingo Super : avant de payer
 
 - Votre compte ne doit pas avoir d'abonnement Super actif : selon Duolingo, le code ne s'applique pas à un abonnement en cours.
 - L'activation se fait uniquement depuis un navigateur web, même si vous êtes sur téléphone.
