@@ -55,7 +55,7 @@ for (const l of inbound.keys()) if (/^\/admin/.test(l)) F(l, 'a public page link
 // robots + 404 behaviour
 const robots = await (await fetch(base + '/robots.txt')).text();
 if (!/Sitemap:/i.test(robots)) F('/robots.txt', 'no Sitemap line');
-for (const bad of ['/order/', '/ar/review/', '/hi/review/', '/fr/review/', '/zh/review/']) if (!robots.includes('Disallow: ' + bad)) F('/robots.txt', `missing Disallow ${bad}`);
+for (const bad of ['/order/', '/account/', '/ar/review/', '/hi/review/', '/fr/review/', '/zh/review/']) if (!robots.includes('Disallow: ' + bad)) F('/robots.txt', `missing Disallow ${bad}`);
 if (robots.includes('/admin')) F('/robots.txt', 'must not advertise the admin path (it is protected by noindex + login)');
 const nf = await fetch(base + '/definitely-not-a-page/'); if (nf.status !== 404) F('/definitely-not-a-page/', `expected 404, got ${nf.status}`);
 const fav = await fetch(base + '/favicon.ico'); if (fav.status !== 200) F('/favicon.ico', `status ${fav.status}`);

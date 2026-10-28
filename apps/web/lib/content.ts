@@ -10,7 +10,7 @@ export type Page = {
   url: string; locale: string; lang: Lang; dir: 'rtl' | 'ltr';
   title: string; description: string; html: string; draft: boolean;
   unresolved: string[]; hreflangGroup?: string; lastmod: string;
-  kind?: string; priceUsdt?: number; faq: { q: string; a: string }[]; h1: string;
+  kind?: string; priceUsdt?: number; topup: boolean; faq: { q: string; a: string }[]; h1: string;
 };
 
 function parse(md: string) {
@@ -45,7 +45,7 @@ export function allPages(): Page[] {
       // A page is a draft if flagged DRAFT OR still has unresolved placeholders/VERIFY markers.
       draft: fm.status?.startsWith('DRAFT') || unresolved.length > 0,
       unresolved, hreflangGroup: fm.hreflang_group,
-      kind: fm.kind, priceUsdt: fm.price_usdt ? Number(fm.price_usdt) : undefined,
+      kind: fm.kind, topup: fm.topup === 'yes', priceUsdt: fm.price_usdt ? Number(fm.price_usdt) : undefined,
       faq: parseFaq(body), h1: (body.match(/^# (.+)$/m) || [])[1] || fm.title,
       lastmod: fm.last_modified || '2026-10-14',   // content-check enforces last_modified on every page
     };

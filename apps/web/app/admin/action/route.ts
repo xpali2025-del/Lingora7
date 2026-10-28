@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   if (!user) return redirectTo(req, '/admin/login/');
   try {
     const r: any = await runAction(db(), user, p._action, p, { key32: key32(), ip: clientIp(req) });
-    if (['review_moderate', 'market_save', 'contact_save'].includes(p._action)) {   // refresh the statically generated market pages right away
+    if (['review_moderate', 'market_save', 'contact_save', 'yemen_payments_save'].includes(p._action)) {   // refresh the statically generated market pages right away
       revalidatePath('/[locale]/[[...path]]', 'page');
       if (p._action === 'contact_save') revalidatePath('/', 'layout');
     }

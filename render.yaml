@@ -1,0 +1,30 @@
+# Render blueprint: free web service. Fill the env vars marked sync:false in the Render dashboard (see README, section "النشر المجاني").
+# Render's free web service sleeps after 15 minutes without traffic and wakes in up to a minute; the 5-minute tick keeps it mostly awake.
+services:
+  - type: web
+    name: lingora
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run db:migrate && npm run web:build
+    startCommand: npm run web:start
+    healthCheckPath: /api/health/
+    envVars:
+      - { key: NODE_VERSION, value: "22" }
+      - { key: NODE_ENV, value: production }
+      - { key: DB_POOL_MAX, value: "5" }
+      - { key: TRUSTED_PROXY_HOPS, value: "1" }
+      - { key: EMAIL_PROVIDER, value: resend }
+      - { key: SITE_URL, sync: false }
+      - { key: DATABASE_URL, sync: false }
+      - { key: DB_SSL, value: require }
+      - { key: DB_SSL_CA, sync: false }
+      - { key: MASTER_ENCRYPTION_KEY, sync: false }
+      - { key: CRON_SECRET, sync: false }
+      - { key: EMAIL_API_KEY, sync: false }
+      - { key: EMAIL_FROM, sync: false }
+      - { key: SUPPORT_EMAIL, sync: false }
+      - { key: GOOGLE_CLIENT_ID, sync: false }
+      - { key: GOOGLE_CLIENT_SECRET, sync: false }
+      - { key: OWNER_EMAILS, sync: false }
+      - { key: TURNSTILE_SECRET_KEY, sync: false }
+      - { key: NEXT_PUBLIC_TURNSTILE_SITE_KEY, sync: false }

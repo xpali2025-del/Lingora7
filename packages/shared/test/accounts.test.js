@@ -177,3 +177,16 @@ test('stock guard: no order (USDT or balance) when nothing is left to deliver; s
   assert.equal(await C.sellableStock(db), 0, 'the paid order is waiting for the only code');
   await assert.rejects(C.createOrder(db, { marketCode: 'ar-eg' }), { code: 'out_of_stock' });
 });
+
+test('provider settings: free on-chain strategy with a verification node; http endpoints and bad contracts are refused', async () => {
+  const db = await makeDb(); const u = { id: 1, email: 'o@x.co', role: 'owner' };
+  const id = (await db.query(`SELECT id FROM payment_providers WHERE type='binance_bep20'`)).rows[0].id;
+  const ADDR = '0x' + '5'.repeat(40);
+  await A.runAction(db, u, 'provider_save', { id, receivingAddress: ADDR, strategy: 'onchain', verifyRpcUrl: 'https://verify.example/rpc', usdtContract: '0x55d398326f99059fF775485246999027B3197955', requiredConfirmations: '15' }, { key32: KEY });
+  const cfg = (await db.query('SELECT public_config FROM payment_providers WHERE id=$1', [id])).rows[0].public_config;
+  assert.equal(cfg.strategy, 'onchain'); assert.equal(cfg.verifyRpcUrl, 'https://verify.example/rpc'); assert.equal(cfg.network, 'BSC');
+  await assert.rejects(A.runAction(db, u, 'provider_save', { id, strategy: 'onchain', verifyRpcUrl: 'http://insecure.example' }, { key32: KEY }), { code: 'bad_input' });
+  await assert.rejects(A.runAction(db, u, 'provider_save', { id, strategy: 'onchain', usdtContract: 'not-an-address' }, { key32: KEY }), { code: 'bad_address' });
+  await A.runAction(db, u, 'provider_save', { id, strategy: 'onchain', verifyRpcUrl: '' }, { key32: KEY });
+  assert.equal((await db.query('SELECT public_config FROM payment_providers WHERE id=$1', [id])).rows[0].public_config.verifyRpcUrl, undefined);
+});

@@ -218,6 +218,7 @@ async function saveProvider(db, user, p, key32, log) {
   if (row.type === 'binance_bep20') {
     pub.strategy = p.strategy === 'onchain' ? 'onchain' : 'binance';
     if (p.rpcUrl !== undefined && str(p.rpcUrl)) { if (!/^https:\/\//.test(str(p.rpcUrl))) throw new AdminError('bad_input'); pub.rpcUrl = str(p.rpcUrl); }
+    if (p.verifyRpcUrl !== undefined) { const v = str(p.verifyRpcUrl); if (v) { if (!/^https:\/\//.test(v)) throw new AdminError('bad_input'); pub.verifyRpcUrl = v; } else delete pub.verifyRpcUrl; }
     if (str(p.usdtContract)) { if (!ADDR_RE.test(str(p.usdtContract))) throw new AdminError('bad_address'); pub.usdtContract = str(p.usdtContract); }
     if (str(p.requiredConfirmations)) pub.requiredConfirmations = int(p.requiredConfirmations);
   }

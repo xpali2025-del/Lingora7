@@ -6,7 +6,8 @@ import Safe from '@/components/Safe';
 import { Breadcrumbs } from '@/components/Chrome';
 import { OG_IMAGE } from '@/lib/meta';
 import ReviewsList from '@/components/ReviewsList';
-import { marketInfo, getContact, contactListHtml } from '@/lib/data';
+import { marketInfo, getContact, contactListHtml, getYemenPayments, paymentBlocksHtml } from '@/lib/data';
+import TopupForm from '@/components/TopupForm';
 
 export const dynamicParams = true;   // required for on-demand revalidation; unknown URLs still 404 via notFound()
 export const revalidate = 300;   // ISR: live price + approved reviews refresh at most every 5 min (and on admin changes)
@@ -52,13 +53,17 @@ export default async function Page({ params }: Props) {
       reviewBody: r.body, reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5, worstRating: 1 } })) } : {}) });
   if (p.faq.length) ld.push({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: p.faq.map(f => ({
     '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) });
+  let html = p.html;
+  if (html.includes('<!--CONTACT-->')) html = html.replace('<!--CONTACT-->', contactListHtml(await getContact(), p.lang === 'ar' ? 'ar' : 'en'));
+  if (html.includes('<!--PAYMENTS-->')) html = html.replace('<!--PAYMENTS-->', paymentBlocksHtml(await getYemenPayments(), 'تفاصيل حسابات الدفع المحلية تصلك عند التواصل معنا. اكتب لنا عبر نموذج الطلب أدناه أو على بريد الدعم.'));
   return (
     <main className="page">
       <Breadcrumbs lang={p.lang} current={p.h1} />
       {p.draft && <p className="draft">مسودة — غير مفهرسة (noindex)</p>}
       {!p.draft && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />}
-      {mc && !p.draft && price ? <Safe><BuyBox market={mc} lang={p.lang} price={price} /></Safe> : null}
-      <article dangerouslySetInnerHTML={{ __html: p.html.includes('<!--CONTACT-->') ? p.html.replace('<!--CONTACT-->', contactListHtml(await getContact(), p.lang === 'ar' ? 'ar' : 'en')) : p.html }} />
+      {mc && !p.draft && price ? <Safe><BuyBox market={mc} lang={p.lang} price={price} inStock={info?.inStock ?? true} /></Safe> : null}
+      <article dangerouslySetInnerHTML={{ __html: html }} />
+      {p.topup && !p.draft && <Safe><TopupForm lang={p.lang} /></Safe>}
       {p.kind === 'market' && !p.draft && <ReviewsList reviews={info?.reviews ?? []} lang={p.lang} />}
     </main>
   );
