@@ -45,6 +45,7 @@ export default async function Home() {
         <Link className="card" href="/hi/how-to-redeem/" lang="hi"><h3>Duolingo Super रिडीम कैसे करें</h3><p>हिन्दी में कदम और आम गलतियों के हल।</p></Link>
         <Link className="card" href="/fr/how-to-redeem/" lang="fr"><h3>Activer Duolingo Super</h3><p>Les étapes en français et les erreurs courantes.</p></Link>
         <Link className="card" href="/zh/how-to-redeem/" lang="zh"><h3>多邻国 Super 兑换教程</h3><p>中文步骤与常见错误的解决方法。</p></Link>
+        <Link className="card" href="/ar/" dir="rtl" lang="ar"><h3>اشتراك دولينجو سوبر</h3><p>كيف يعمل رابط التفعيل وأسعار الدول العربية.</p></Link>
         <Link className="card" href="/ar/price/" dir="rtl" lang="ar"><h3>سعر دولينجو سوبر</h3><p>السعر بالتفصيل وما الذي يضيفه الاشتراك.</p></Link>
         <Link className="card" href="/ar/super-vs-free/" dir="rtl" lang="ar"><h3>الفرق بين المجاني وسوبر</h3><p>مقارنة واضحة لتقرر إن كان سوبر يناسبك.</p></Link>
       </div>

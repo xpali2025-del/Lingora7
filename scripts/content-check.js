@@ -42,4 +42,9 @@ for (const f of readdirSync(path.join(root, 'content')).filter(f => f.endsWith('
     if (seedPrice[code] !== undefined && Number(fm.price_usdt) !== seedPrice[code]) { console.log(`FAIL ${f}: price_usdt ${fm.price_usdt} != seed ${seedPrice[code]}`); bad++; }
   }
 }
+const livePrices = new Set(Object.values(seedPrice));
+for (const f of readdirSync(path.join(root, 'content')).filter(f => f.endsWith('.md'))) {
+  const md = readFileSync(path.join(root, 'content', f), 'utf8'); if (frontMatter(md).kind === 'market') continue;
+  for (const m of md.matchAll(/(\d+(?:\.\d+)?)\s*USDT/g)) if (!livePrices.has(Number(m[1]))) { console.log(`FAIL ${f}: price "${m[0]}" is not a market price in db/seed.sql`); bad++; }
+}
 console.log(bad ? 'content-check FAILED' : 'content-check OK'); process.exit(bad ? 1 : 0);
