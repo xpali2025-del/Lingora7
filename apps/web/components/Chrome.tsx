@@ -3,7 +3,7 @@ import { type Lang, dirOf } from './i18n';
 import { getContact, SOCIALS } from '@/lib/data';
 
 const NAV = {
-  ar: { home: 'الرئيسية', links: [['/ar/', 'دولينجو سوبر'], ['/ar/price/', 'الأسعار'], ['/ar/how-to-redeem/', 'طريقة التفعيل'], ['/ar/super-vs-free/', 'سوبر أم المجاني']],
+  ar: { home: 'الرئيسية', links: [['/ar/price/', 'الأسعار'], ['/ar/how-to-redeem/', 'طريقة التفعيل'], ['/ar/super-vs-free/', 'سوبر أم المجاني']],
     foot: [['/ar/about/', 'من نحن'], ['/ar/refund-policy/', 'سياسة الاسترجاع'], ['/ar/privacy-policy/', 'سياسة الخصوصية'], ['/ar/disclaimer/', 'إخلاء المسؤولية']],
     other: ['/en/', 'English'], note: 'Lingora موقع مستقل لإعادة البيع وليس تابعًا لـ Duolingo.', support: 'الدعم', pick: 'اختر دولتك', markets: [['/ar-eg/', 'مصر'], ['/ar-sa/', 'السعودية'], ['/ar-ae/', 'الإمارات'], ['/en/', 'International · English'], ['/en-gb/', 'United Kingdom'], ['/hi/', 'हिन्दी'], ['/fr/', 'Français'], ['/zh/', '中文']], label: 'التنقل الرئيسي' },
   en: { home: 'Home', links: [['/en/', 'Duolingo Super'], ['/en/how-to-redeem/', 'How to redeem']],
