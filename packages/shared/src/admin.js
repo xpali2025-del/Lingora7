@@ -3,6 +3,7 @@
 import { hashPassword, verifyPassword, encrypt, decrypt, sha256Hex, randomToken } from './crypto.js';
 import { generateSecret, verifyTotp, otpauthUrl } from './totp.js';
 import * as C from './commerce.js';
+import * as W from './wallet.js';
 import { parseAmount, formatAmount } from './money.js';
 
 export class AdminError extends Error { constructor(code) { super(code); this.code = code; } }
@@ -19,7 +20,7 @@ export const ACTION_ROLES = {
   provider_save: ['owner'], provider_toggle: ['owner'], provider_test: ['owner'],
   market_save: ['owner'], contact_save: ['owner'], setting_save: ['owner'], wallets_save: ['owner'],
   review_moderate: ['owner', 'support', 'editor'], template_save: ['owner', 'editor'], outbox_retry: ['owner', 'support'],
-  user_create: ['owner'], user_disable: ['owner'], password_change: ['owner', 'support', 'editor', 'analyst'],
+  user_create: ['owner'], user_create_google: ['owner'], topup_resolve: ['owner', 'support'], wallet_debit: ['owner'], wallet_credit: ['owner'], yemen_payments_save: ['owner'], user_disable: ['owner'], password_change: ['owner', 'support', 'editor', 'analyst'],
 };
 export const can = (role, action) => (ACTION_ROLES[action] || []).includes(role);
 
@@ -69,6 +70,22 @@ async function assertTotp(db, userId, secretEnc, code, key32, onFail) {
   const last = await C.getSetting(db, `totp_last:${userId}`, null);
   if (!ok || last === c + ':' + Math.floor(Date.now() / 30000)) { if (onFail) await onFail(); throw new AdminError('invalid_code'); }
   await C.setSetting(db, `totp_last:${userId}`, c + ':' + Math.floor(Date.now() / 30000));
+}
+/** Sign-in with a verified Google address. Allowed: an existing admin user, or an address listed in ownerEmails (bootstrap, no shell needed). */
+export async function loginGoogle(db, { email, ownerEmails = [], ip = null, ua = null }) {
+  const e = String(email || '').trim().toLowerCase();
+  let u = e ? (await db.query('SELECT * FROM admin_users WHERE email=$1', [e])).rows[0] : null;
+  if (!u && e && ownerEmails.map(x => String(x).trim().toLowerCase()).includes(e)) {
+    await db.query(`INSERT INTO admin_users (email, password_hash, role, totp_enabled) VALUES ($1, NULL, 'owner', FALSE) ON CONFLICT (email) DO NOTHING`, [e]);
+    u = (await db.query('SELECT * FROM admin_users WHERE email=$1', [e])).rows[0];
+  }
+  if (!u) { await audit(db, { email: e || null }, 'login_google_denied', null, {}, ip); throw new AdminError('not_allowed'); }
+  if (u.locked_until && new Date(u.locked_until) > new Date()) throw new AdminError('locked');
+  const token = randomToken(32);
+  await db.query(`INSERT INTO admin_sessions (token_hash,user_id,stage,expires_at,ip,ua) VALUES ($1,$2,'full', now()+($3::int*interval '1 hour'), $4, $5)`, [sha256Hex(token), u.id, SESSION_HOURS, ip, String(ua || '').slice(0, 200)]);
+  await db.query('UPDATE admin_users SET failed_logins=0, last_login_at=now() WHERE id=$1', [u.id]);
+  await audit(db, { id: u.id, email: u.email }, 'login_google', null, {}, ip);
+  return { token, role: u.role };
 }
 export async function getSession(db, token) {
   if (!token) return null;
@@ -154,6 +171,21 @@ export async function runAction(db, user, action, p, { key32, ip = null } = {}) 
     }
     case 'outbox_retry': await db.query(`UPDATE email_outbox SET status='pending', attempts=0, next_attempt_at=now() WHERE id=$1 AND status IN ('failed','cancelled')`, [int(p.id)]); await log(`outbox:${p.id}`, {}); return 'retry queued';
     case 'user_create': { const r = await createAdminUser(db, { email: p.email, password: p.password, role: p.role, key32 }); await log(`user:${r.email}`, { role: r.role }); return { message: 'user created', totpSecret: r.totpSecret, otpauth: r.otpauth }; }
+    case 'user_create_google': {
+      const e = str(p.email, 254).toLowerCase(); if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) throw new AdminError('bad_username');
+      if (!ROLES.includes(p.role)) throw new AdminError('bad_role');
+      const r = await db.query(`INSERT INTO admin_users (email, password_hash, role, totp_enabled) VALUES ($1, NULL, $2, FALSE) ON CONFLICT (email) DO NOTHING RETURNING id`, [e, p.role]);
+      if (!r.rows[0]) throw new AdminError('user_exists');
+      await log(`user:${e}`, { role: p.role, google: true }); return 'Google user added: they sign in with "Continue with Google"';
+    }
+    case 'topup_resolve': { const r = await W.resolveTopup(db, { id: int(p.id), action: p.op === 'reject' ? 'reject' : 'credit', amount: p.amount, actor, note: str(p.note) }); await log(`topup:${p.id}`, { op: p.op, amount: p.amount, ...r }); return r.status === 'credited' ? `credited, balance ${r.balance}` : 'rejected'; }
+    case 'wallet_credit': { const r = await W.creditWallet(db, { email: str(p.email, 254), amount: p.amount, note: str(p.note) || 'manual credit', actor, kind: 'adjustment' }); await log(`wallet:${p.email}`, { amount: p.amount }); return `credited, balance ${r.balance}`; }
+    case 'wallet_debit': { const r = await W.debitWallet(db, { email: str(p.email, 254), amount: p.amount, note: str(p.note) || 'manual debit', actor }); await log(`wallet:${p.email}`, { amount: p.amount, debit: true }); return `debited, balance ${r.balance}`; }
+    case 'yemen_payments_save': {
+      const blocks = String(p.text || '').replace(/\r/g, '').split(/\n\s*\n/).map(b => b.split('\n').map(l => l.trim()).filter(Boolean)).filter(b => b.length)
+        .map(b => ({ title: b[0].slice(0, 80), lines: b.slice(1, 12).map(l => l.slice(0, 160)) })).slice(0, 12);
+      await C.setSetting(db, 'ye_payment_methods', blocks); await log('settings:ye_payment_methods', { blocks: blocks.length }); return `saved ${blocks.length} block(s)`;
+    }
     case 'user_disable': { if (int(p.id) === user.id) throw new AdminError('cannot_disable_self'); await db.query(`UPDATE admin_users SET locked_until='2999-01-01' WHERE id=$1`, [int(p.id)]); await db.query('DELETE FROM admin_sessions WHERE user_id=$1', [int(p.id)]); await log(`user:${p.id}`, {}); return 'disabled'; }
     case 'password_change': {
       const u = (await db.query('SELECT * FROM admin_users WHERE id=$1', [user.id])).rows[0];
@@ -175,7 +207,11 @@ async function saveProvider(db, user, p, key32, log) {
     if (!ADDR_RE.test(addr)) throw new AdminError('bad_address');
     if (pub.receivingAddress && pub.receivingAddress.toLowerCase() !== addr.toLowerCase()) {   // changing the wallet = re-confirm with a fresh 2FA code
       const u = (await db.query('SELECT totp_secret_encrypted FROM admin_users WHERE id=$1', [user.id])).rows[0];
-      await assertTotp(db, user.id, u.totp_secret_encrypted, p.totp, key32, null).catch(() => { throw new AdminError('totp_required'); });
+      if (u.totp_secret_encrypted) await assertTotp(db, user.id, u.totp_secret_encrypted, p.totp, key32, null).catch(() => { throw new AdminError('totp_required'); });
+      else {   // Google-only admin: no authenticator, so the session itself must be fresh (signed in within the last 15 minutes)
+        const fresh = (await db.query(`SELECT 1 FROM admin_sessions WHERE token_hash=$1 AND created_at > now() - interval '15 minutes'`, [user.token_hash])).rows[0];
+        if (!fresh) throw new AdminError('recent_login_required');
+      }
     }
     pub.receivingAddress = addr;
   }

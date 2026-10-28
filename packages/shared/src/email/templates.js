@@ -15,6 +15,7 @@ const S = {
     order_received: { subject: 'We received your payment - order {ref}', intro: 'Your payment was confirmed. Please enter your email on the order page so we can send your link.' },
     refund_approved: { subject: 'Your refund was approved - order {ref}', intro: 'We approved your refund request. We will send it in USDT (BEP20) to the address you provide.' },
     refund_rejected: { subject: 'About your refund request - order {ref}', intro: 'We reviewed your request and could not approve a refund. Reply to this email if you think we missed something.' },
+    login_link: { subject: 'Your Lingora sign-in link', intro: 'Use the button below to sign in to your Lingora account. The link works once and expires in 15 minutes.', button: 'Sign in', optout: 'If you did not ask for this, ignore this email: nobody can sign in without the link.' },
   },
   ar: {
     code_delivered: { subject: 'رابط دولينجو سوبر الخاص بك - الطلب {ref}', intro: 'شكرًا لطلبك. رابط تفعيل دولينجو سوبر لمدة 12 شهرًا جاهز.',
@@ -26,6 +27,7 @@ const S = {
     order_received: { subject: 'استلمنا دفعتك - الطلب {ref}', intro: 'تم تأكيد دفعتك. أدخل بريدك الإلكتروني في صفحة الطلب لنرسل لك الرابط.' },
     refund_approved: { subject: 'تمت الموافقة على استرجاعك - الطلب {ref}', intro: 'وافقنا على طلب الاسترجاع. سنرسل المبلغ بعملة USDT على شبكة BEP20 إلى العنوان الذي تزودنا به.' },
     refund_rejected: { subject: 'بخصوص طلب الاسترجاع - الطلب {ref}', intro: 'راجعنا طلبك ولم نتمكن من الموافقة على الاسترجاع. ردّ على هذه الرسالة إن رأيت أن شيئًا فاتنا.' },
+    login_link: { subject: 'رابط الدخول إلى حسابك في Lingora', intro: 'استخدم الزر أدناه لتسجيل الدخول إلى حسابك في Lingora. يعمل الرابط مرة واحدة وينتهي بعد 15 دقيقة.', button: 'تسجيل الدخول', optout: 'إن لم تطلب هذا فتجاهل الرسالة: لا أحد يستطيع الدخول دون الرابط.' },
   },
   id: {
     code_delivered: { subject: 'Tautan Duolingo Super Anda - pesanan {ref}', intro: 'Terima kasih atas pesanan Anda. Tautan penukaran Duolingo Super 12 bulan sudah siap.',
@@ -134,6 +136,10 @@ export function renderEmail(template, lang, data, overrides = null) {
     lines.push('', `${s.linkLabel}: ${data.redeemUrl}`, '', `${s.stepsTitle}:`, ...s.steps.map((x, i) => `${i + 1}. ${x}`), '', s.note);
     blocks.push(`<p><strong>${esc(s.linkLabel)}:</strong><br><a href="${esc(data.redeemUrl)}">${esc(data.redeemUrl)}</a></p>`,
       `<p><strong>${esc(s.stepsTitle)}</strong></p><ol>${s.steps.map(x => `<li>${esc(x)}</li>`).join('')}</ol>`, `<p style="color:#555">${esc(s.note)}</p>`);
+  }
+  if (template === 'login_link') {
+    lines.push('', `${s.button}: ${data.loginUrl}`, '', s.optout);
+    blocks.push(`<p><a href="${esc(data.loginUrl)}" style="display:inline-block;padding:10px 18px;background:#0f2a47;color:#fff;border-radius:8px;text-decoration:none">${esc(s.button)}</a></p>`, `<p style="color:#555">${esc(s.optout)}</p>`);
   }
   if (template === 'review_invitation') {
     lines.push('', `${s.button}: ${data.reviewUrl}`, '', s.optout);

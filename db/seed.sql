@@ -5,6 +5,7 @@ INSERT INTO markets (code, country_code, locale, language, tier, price_usdt, ena
  ('ar-eg', 'EG', 'ar-EG', 'ar', 'arab', 13, TRUE,  'live'),
  ('ar-sa', 'SA', 'ar-SA', 'ar', 'arab', 13, TRUE,  'live'),
  ('ar-ae', 'AE', 'ar-AE', 'ar', 'arab', 13, TRUE,  'live'),
+ ('ye',    'YE', 'ar-YE', 'ar', 'arab', 13, TRUE,  'live'),   -- price follows the Arab tier; change it in the admin if you want a different one
  ('ar-qa', 'QA', 'ar-QA', 'ar', 'arab', 13, FALSE, 'draft'),
  ('en-gb', 'GB', 'en-GB', 'en', 'intl', 15, TRUE,  'live'),
  ('hi',    'IN', 'hi-IN', 'hi', 'intl', 15, TRUE,  'live'),
@@ -31,11 +32,12 @@ INSERT INTO settings (key, value) VALUES
  ('unique_decimal_max',   '"0.0099"'),
  ('low_stock_threshold',  '5'),
  ('review_invite_days',   '3'),
- ('overpay_policy',       '"accept"')
+ ('overpay_policy',       '"accept"'),
+ ('block_orders_when_out_of_stock', 'true')
 ON CONFLICT (key) DO NOTHING;
 
 INSERT INTO payment_providers (type, enabled) VALUES
- ('binance_bep20', FALSE), ('paypal', FALSE), ('payoneer', FALSE), ('mock', FALSE)
+ ('binance_bep20', FALSE), ('paypal', FALSE), ('payoneer', FALSE), ('mock', FALSE), ('balance', TRUE)   -- 'balance' = pay from the customer wallet (internal, always on)
 ON CONFLICT (type) DO NOTHING;
 
 -- Binance USDT is offered on every enabled market by default; turn it off per country in the admin where counsel advises.

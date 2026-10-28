@@ -3,7 +3,7 @@ import { requireUser, Shell, fmt, ActionForm } from '@/lib/admin';
 export const dynamic = 'force-dynamic';
 export default async function Page({ searchParams }: { searchParams: Promise<{ msg?: string }> }) {
   const user = await requireUser(); const { msg } = await searchParams;
-  const rows = (await db().query('SELECT * FROM payment_providers ORDER BY id')).rows;
+  const rows = (await db().query('SELECT * FROM payment_providers WHERE type <> 'balance' ORDER BY id')).rows;
   return (
     <Shell user={user} title="Payment settings" msg={msg}>
       <p className="warn">API secrets are write-only: they are encrypted when saved and never shown again. Changing the receiving wallet asks for a fresh 2FA code and is audit-logged. Use a <b>read-only</b> Binance API key (no withdrawals), restricted to the worker’s static IP.</p>

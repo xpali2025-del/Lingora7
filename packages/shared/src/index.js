@@ -8,3 +8,6 @@ export * from './email/templates.js';
 export * from './email/send.js';
 export * from './admin.js';
 export * from './http.js';
+export * from './google.js';
+export * from './customers.js';
+export * from './wallet.js';

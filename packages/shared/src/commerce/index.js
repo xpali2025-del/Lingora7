@@ -9,3 +9,5 @@ export * from './inventory.js';
 export * from './refunds.js';
 export * from './reviews.js';
 export * from './holds.js';
+export * from './stock.js';
+export * from './balance.js';

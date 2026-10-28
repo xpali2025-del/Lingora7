@@ -19,14 +19,18 @@ export async function submitEmail(db, { ref, key, email, emailConfirm, key32 }) 
       throw new CommerceError('order_not_paid');
     }
     await t.query('UPDATE orders SET email_encrypted=$2, email_submitted_at=now() WHERE id=$1', [o.id, encrypt(e1, key32)]);
-    await transition(t, o.id, 'awaiting_email', 'ready_to_fulfil', { email: 'submitted' }, 'customer');
-    const mode = o.market_mode || (await getSetting(t, 'fulfilment_mode', 'manual'));
-    if (mode === 'auto' && !o.flags?.hold) {
-      const r = await fulfilOrderTx(t, o.id, 'auto');
-      return { status: 'ready_to_fulfil', queued: r.ok, mode };
-    }
-    return { status: 'ready_to_fulfil', mode };
+    return readyForFulfilment(t, o);
   });
+}
+/** awaiting_email -> ready_to_fulfil, then fulfil right away in auto mode (unless the order is on hold). Shared by guests and wallet buyers. */
+export async function readyForFulfilment(t, o) {
+  await transition(t, o.id, 'awaiting_email', 'ready_to_fulfil', { email: 'submitted' }, 'customer');
+  const mode = o.market_mode || (await getSetting(t, 'fulfilment_mode', 'manual'));
+  if (mode === 'auto' && !o.flags?.hold) {
+    const r = await fulfilOrderTx(t, o.id, 'auto');
+    return { status: 'ready_to_fulfil', queued: r.ok, mode };
+  }
+  return { status: 'ready_to_fulfil', mode };
 }
 /** Admin correction of the customer's email (audit-logged by the caller). */
 export async function setOrderEmail(db, { orderId, email, actor, key32 }) {

@@ -4,6 +4,7 @@ import { parseAmount, formatAmount, withOffset } from '../money.js';
 import { CommerceError } from './errors.js';
 import { addEvent } from './state.js';
 import { getSetting } from './settings.js';
+import { assertInStock } from './stock.js';
 
 const REF_ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';   // no 0/O/1/I/L
 const newRef = () => 'LG-' + Array.from({ length: 8 }, () => REF_ALPHABET[randomInt(REF_ALPHABET.length)]).join('');
@@ -26,6 +27,7 @@ export async function createOrder(db, { marketCode, ipHash = null }) {
   if (!provider) throw new CommerceError('no_payment_method');
   const cfg = provider.public_config || {};
   if (!cfg.receivingAddress) throw new CommerceError('provider_not_configured');
+  await assertInStock(db);
 
   if (ipHash) {
     const open = await db.query(`SELECT count(*)::int AS n FROM orders WHERE status='awaiting_payment' AND flags->>'ipHash'=$1`, [ipHash]);
