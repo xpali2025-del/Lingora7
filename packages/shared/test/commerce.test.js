@@ -219,3 +219,14 @@ test('rate limiter and per-IP open-order cap', async () => {
   await assert.rejects(C.createOrder(db, { marketCode: 'ar-eg', ipHash: 'h1' }), { code: 'too_many_open_orders' });
   await C.createOrder(db, { marketCode: 'ar-eg', ipHash: 'h2' });
 });
+
+test('expireOrders flips status and writes the audit event together; references use the unambiguous alphabet', async () => {
+  const db = await makeDb();
+  const o = await C.createOrder(db, { marketCode: 'ar-eg' });
+  assert.match(o.ref, /^LG-[2-9A-HJKMNP-Z]{8}$/);
+  await db.query(`UPDATE orders SET expires_at = now() - interval '1 minute' WHERE public_ref=$1`, [o.ref]);
+  assert.equal(await C.expireOrders(db), 1);
+  assert.equal(await C.expireOrders(db), 0, 'second run finds nothing to expire');
+  const ev = await db.query(`SELECT count(*)::int n FROM order_events e JOIN orders o ON o.id=e.order_id WHERE o.public_ref=$1 AND e.type='status:expired'`, [o.ref]);
+  assert.equal(ev.rows[0].n, 1);
+});

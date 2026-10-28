@@ -52,7 +52,12 @@ export async function loginPassword(db, { email, password, ip = null, ua = null 
 export async function loginTotp(db, { token, code, key32, ip = null }) {
   const s = (await db.query(`SELECT s.*, u.totp_secret_encrypted, u.email FROM admin_sessions s JOIN admin_users u ON u.id=s.user_id WHERE s.token_hash=$1 AND s.stage='password_ok' AND s.expires_at>now()`, [sha256Hex(token || '')])).rows[0];
   if (!s) throw new AdminError('session_expired');
-  await assertTotp(db, s.user_id, s.totp_secret_encrypted, code, key32, () => audit(db, { id: s.user_id, email: s.email }, 'totp_failed', null, {}, ip));
+  await assertTotp(db, s.user_id, s.totp_secret_encrypted, code, key32, async () => {
+    // A wrong code counts like a wrong password: lock the account and kill the half-open session at the limit.
+    const u = (await db.query(`UPDATE admin_users SET failed_logins=failed_logins+1, locked_until=CASE WHEN failed_logins+1>=$2 THEN now()+($3::int*interval '1 minute') ELSE locked_until END WHERE id=$1 RETURNING failed_logins`, [s.user_id, MAX_FAILS, LOCK_MIN])).rows[0];
+    if (u && u.failed_logins >= MAX_FAILS) await db.query(`DELETE FROM admin_sessions WHERE user_id=$1 AND stage='password_ok'`, [s.user_id]);
+    await audit(db, { id: s.user_id, email: s.email }, 'totp_failed', null, {}, ip);
+  });
   await db.query(`UPDATE admin_sessions SET stage='full', expires_at=now()+($2::int*interval '1 hour') WHERE token_hash=$1`, [s.token_hash, SESSION_HOURS]);
   await db.query('UPDATE admin_users SET failed_logins=0, locked_until=NULL, last_login_at=now() WHERE id=$1', [s.user_id]);
   await audit(db, { id: s.user_id, email: s.email }, 'login', null, {}, ip);

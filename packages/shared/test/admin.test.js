@@ -92,3 +92,11 @@ test('contact details: owner-only, validated, stored', async () => {
   const c = await C.getSetting(db, 'contact', null);
   assert.equal(c.email, 'hello@lingora.world'); assert.equal(c.whatsapp, '201001234567'); assert.equal(c.instagram, 'https://instagram.com/lingora'); assert.equal(c.legal_name, 'Lingora Ltd');
 });
+
+test('wrong TOTP codes lock the account and end the half-open session', async () => {
+  const { db, owner } = await boot();
+  const { token } = await A.loginPassword(db, { email: owner.email, password: 'correct horse battery' });
+  for (let i = 0; i < 5; i++) await assert.rejects(A.loginTotp(db, { token, code: '000000', key32: KEY }), { code: i < 5 ? 'invalid_code' : 'session_expired' });
+  await assert.rejects(A.loginTotp(db, { token, code: code(owner.totpSecret), key32: KEY }), { code: 'session_expired' });
+  await assert.rejects(A.loginPassword(db, { email: owner.email, password: 'correct horse battery' }), { code: 'locked' });
+});
